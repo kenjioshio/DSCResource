@@ -17,6 +17,7 @@ configuration ConfigureNTP
         [string[]]$FailOverNTPServer = ("s2csntp.miz.nao.ac.jp", "ntp.jst.mfeed.ad.jp")
     )
 
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
     $ntpServerValue1 = [string]($ntpServer | %{$_, (",0x{0:x}" -f "8")}) -replace " ,",","
     $ntpServerValue2 = [string]($FailOverNTPServers | %{$_, (",0x{0:x}" -f "a")}) -replace " ,",","
     $ntpServerValue = $ntpServerValue1, $ntpServerValue2 -join " "
@@ -175,7 +176,6 @@ configuration ConfigureNTP
         Ensure = "Present"
     }
 
-
     # Set NTP Server list
     for ($i = 0; $i -lt $ntpservers.Count; $i++)
     {
@@ -194,3 +194,4 @@ configuration ConfigureNTP
 }
 
 ConfigureNTP -OutputPath .\ConfigureNTP
+Start-DscConfiguration -Wait -Force -Verbose -Path .\ConfigureNTP -ComputerName Localhost
